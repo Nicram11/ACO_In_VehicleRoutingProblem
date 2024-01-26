@@ -62,7 +62,6 @@ public class City {
         }
         line = reader.readLine();
 
-        int i = 0;
         while (!line.contains("DEPOT_SECTION")) {
             String[] values = line.trim().split("\\s+");
             int cityId = Integer.parseInt(values[0]);
