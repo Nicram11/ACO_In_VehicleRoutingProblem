@@ -1,0 +1,8 @@
+sty 26, 2024 1:33:38 PM App main
+SEVERE: A severe message
+sty 26, 2024 1:33:38 PM App main
+INFO: An info message
+sty 26, 2024 2:52:47 PM City fetchCities
+INFO: [City [id=1,demand=0], City [id=2,demand=19], City [id=3,demand=21], City [id=4,demand=6], City [id=5,demand=19], City [id=6,demand=7], City [id=7,demand=12], City [id=8,demand=16], City [id=9,demand=6], City [id=10,demand=16], City [id=11,demand=8], City [id=12,demand=14], City [id=13,demand=21], City [id=14,demand=16], City [id=15,demand=3], City [id=16,demand=22], City [id=17,demand=18], City [id=18,demand=19], City [id=19,demand=1], City [id=20,demand=24], City [id=21,demand=8], City [id=22,demand=12], City [id=23,demand=4], City [id=24,demand=8], City [id=25,demand=24], City [id=26,demand=24], City [id=27,demand=2], City [id=28,demand=20], City [id=29,demand=15], City [id=30,demand=2], City [id=31,demand=14], City [id=32,demand=9]]
+sty 26, 2024 3:17:16 PM City fetchCities
+INFO: [City [id=1,demand=0], City [id=2,demand=19], City [id=3,demand=21], City [id=4,demand=6], City [id=5,demand=19], City [id=6,demand=7], City [id=7,demand=12], City [id=8,demand=16], City [id=9,demand=6], City [id=10,demand=16], City [id=11,demand=8], City [id=12,demand=14], City [id=13,demand=21], City [id=14,demand=16], City [id=15,demand=3], City [id=16,demand=22], City [id=17,demand=18], City [id=18,demand=19], City [id=19,demand=1], City [id=20,demand=24], City [id=21,demand=8], City [id=22,demand=12], City [id=23,demand=4], City [id=24,demand=8], City [id=25,demand=24], City [id=26,demand=24], City [id=27,demand=2], City [id=28,demand=20], City [id=29,demand=15], City [id=30,demand=2], City [id=31,demand=14], City [id=32,demand=9]]
