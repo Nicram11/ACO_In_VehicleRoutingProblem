@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -31,13 +32,23 @@ public class App {
     public static void main(String[] args) throws Exception {
 
         System.out.println("Hello, World!");
-        String filePath = "./src/cities/A-n32-k5.vrp";
-        var cities = City.fetchCities(filePath);
+        String fileName = "F-n135-k7.vrp";
+        String folderPath = "./src/cities/";
+        var cities = City.fetchCities(folderPath + fileName);
+        long startTime = System.currentTimeMillis();
+
         VrpAco aco = new VrpAco(cities);
         aco.runOptimization();
-        System.out.println("bestTour" + aco.getBestTour());
+        long endTime = System.currentTimeMillis();
+        double executionTime = (endTime - startTime) / 1000.0;
 
+        LOGGER.severe("[RESULT] [ " + fileName + "] bestTour: "
+                + CityListToStringConverter.convertCitiesToString(aco.getBestTour()) + " \r\nexecTime:"
+                + executionTime + "[s] \r\nLength: "
+                + aco.getBestTourLength());
+        System.out.println("exec time: " + executionTime + "[s]");
         System.out.println("bestTourLength" + aco.getBestTourLength());
         // System.out.println(cities);
     }
+
 }

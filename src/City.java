@@ -79,7 +79,7 @@ public class City {
         }
 
         reader.close();
-        App.LOGGER.info(coordinates.toString());
+        // App.LOGGER.info(coordinates.toString());
         return coordinates;
     }
 

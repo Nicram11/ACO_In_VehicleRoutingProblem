@@ -2,14 +2,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class VrpAco {
     private List<City> cities;
     private Map<Pair<City, City>, Edge> edgeMap;
     private List<Ant> ants;
-
     private List<City> bestTour;
-
     private double bestTourLength;
 
     public VrpAco(List<City> cities) {
@@ -44,17 +47,42 @@ public class VrpAco {
     }
 
     public void runOptimization() {
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         for (int iteration = 0; iteration < Env.maxIterations; iteration++) {
+            List<Future<?>> futures = new ArrayList<>();
             for (Ant ant : ants) {
-                constructAntTour(ant);
-                double currentTourLength = ant.getTourLength();
-                if (currentTourLength < bestTourLength) {
-                    bestTourLength = currentTourLength;
-                    bestTour = new ArrayList<>(ant.getVisitedCities());
+                Future<?> future = executor.submit(() -> {
+                    constructAntTour(ant);
+                    updateBestTour(ant);
+                });
+                futures.add(future);
+
+            }
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
             }
             updatePheromones();
 
+        }
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
+    }
+
+    private synchronized void updateBestTour(Ant ant) {
+        double currentTourLength = ant.getTourLength();
+        if (currentTourLength < bestTourLength) {
+            bestTourLength = currentTourLength;
+            bestTour = new ArrayList<>(ant.getVisitedCities());
         }
     }
 
