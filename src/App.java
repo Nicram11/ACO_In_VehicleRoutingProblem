@@ -41,10 +41,12 @@ public class App {
         double executionTime = (endTime - startTime) / 1000.0;
 
         LOGGER.severe("[RESULT] [ " + fileName + "] bestTour: "
-                + CityListToStringConverter.convertCitiesToString(aco.getBestTour()) + " \r\nexecTime:"
+                + CityListToStringConverter.convertCityIdsToString(aco.getBestTour()) + " \r\nexecTime:"
                 + executionTime + "[s] \r\nLength: "
                 + aco.getBestTourLength());
         ;
+
+        // System.out.println(CityListToStringConverter.convertCitiesToDetailedString(cities));
     }
 
 }
