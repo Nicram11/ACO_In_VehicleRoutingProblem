@@ -33,6 +33,7 @@ public class App {
         String fileName = "F-n135-k7.vrp";
         String folderPath = "./src/cities/";
         var cities = City.fetchCities(folderPath + fileName);
+
         long startTime = System.currentTimeMillis();
 
         VrpAco aco = new VrpAco(cities);
@@ -44,9 +45,23 @@ public class App {
                 + CityListToStringConverter.convertCityIdsToString(aco.getBestTour()) + " \r\nexecTime:"
                 + executionTime + "[s] \r\nLength: "
                 + aco.getBestTourLength());
-        ;
+
 
         // System.out.println(CityListToStringConverter.convertCitiesToDetailedString(cities));
+
+        // testing ACU with mutations
+
+        long startTime2 = System.currentTimeMillis();
+
+        VrpAco aco2 = new VrpAco(cities);
+        aco2.runOptimizationWithMutations();
+        long endTime2 = System.currentTimeMillis();
+        double executionTime2 = (endTime2 - startTime2) / 1000.0;
+
+        LOGGER.severe("[RESULT] [ " + fileName + "] bestTour: "
+                + CityListToStringConverter.convertCityIdsToString(aco2.getBestTour()) + " \r\nexecTime:"
+                + executionTime2 + "[s] \r\nLength: "
+                + aco2.getBestTourLength());
     }
 
 }

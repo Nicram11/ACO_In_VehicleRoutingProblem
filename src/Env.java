@@ -10,4 +10,11 @@ public class Env {
     public static int numberOfAnts = 50;
     public static int capacity = 1000;
 
+
+
+    public static double mutationProbability = 0.5;
+    public static int hilltopSearchTryCount = 100;
+    public static int findingMutationTryCount = 3;
+
+
 }
