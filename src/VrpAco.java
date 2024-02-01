@@ -187,70 +187,66 @@ public class VrpAco {
     // ACO with mutations (1 swap between different route + local optimisation)
     // selecting cities until it can no more
 
-    /*
-     * private void constructAntTourTabuList(Ant ant) {
-     * 
-     * ant.reset(cities);
-     * 
-     * List<City> tabuList = new ArrayList<>();
-     * while (ant.getVisitedCities().size() < cities.size()) {
-     * City nextCity = selectNextCityTabuList(ant, tabuList);
-     * 
-     * if(nextCity == null) {
-     * ant.completeVehicleTour();
-     * tabuList.clear();
-     * continue;
-     * }
-     * 
-     * double distance = ant.getCurrentCity().distanceTo(nextCity);
-     * int demand = nextCity.getDemand();
-     * Vehicle vehicle = ant.getCurrentVehicle();
-     * if (vehicle.canAddLoad(demand)) {
-     * vehicle.addLoad(demand);
-     * ant.visitCity(nextCity, distance);
-     * } else {
-     * tabuList.add(nextCity);
-     * }
-     * }
-     * ant.completeVehicleTour();
-     * }
-     */
+    private void constructAntTourTabuList(Ant ant) {
+        ant.reset(cities);
 
-    /*
-     * private City selectNextCityTabuList(Ant ant, List<City> tabuList) {
-     * City currentCity = ant.getCurrentCity();
-     * List<City> allowedCities = new
-     * ArrayList<>(getUnvisitedCities(ant.getVisitedCities()));
-     * allowedCities.removeAll(tabuList);
-     * 
-     * if(allowedCities.isEmpty()) {
-     * return null;
-     * }
-     * 
-     * double total = 0.0;
-     * Map<City, Double> probabilities = new HashMap<>();
-     * 
-     * for (City city : allowedCities) {
-     * Edge edge = findEdge(currentCity, city);
-     * double pheromone = Math.pow(edge.getPheromoneLevel(), Env.alpha);
-     * double heuristic = Math.pow(1.0 / edge.getLength(), Env.beta);
-     * double probability = pheromone * heuristic;
-     * probabilities.put(city, probability);
-     * total += probability;
-     * }
-     * 
-     * double random = Math.random() * total;
-     * double cumulative = 0.0;
-     * for (Map.Entry<City, Double> entry : probabilities.entrySet()) {
-     * cumulative += entry.getValue();
-     * if (random <= cumulative) {
-     * return entry.getKey();
-     * }
-     * }
-     * 
-     * return allowedCities.get(0);
-     * }
-     */
+        List<City> tabuList = new ArrayList<>();
+        while (!getUnvisitedCities(ant.getVisitedCities()).isEmpty()) {
+            City nextCity = selectNextCityTabuList(ant, tabuList);
+
+            if(nextCity == null) {
+            ant.completeVehicleTour();
+            tabuList.clear();
+            continue;
+            }
+
+            double distance = ant.getCurrentCity().distanceTo(nextCity);
+            int demand = nextCity.getDemand();
+            Vehicle vehicle = ant.getCurrentVehicle();
+            if (vehicle.canAddLoad(demand)) {
+                vehicle.addLoad(demand);
+                    ant.visitCity(nextCity, distance);
+                } else {
+                    tabuList.add(nextCity);
+                }
+            }
+        ant.completeVehicleTour();
+    }
+
+
+    private City selectNextCityTabuList(Ant ant, List<City> tabuList) {
+        City currentCity = ant.getCurrentCity();
+        List<City> allowedCities = new
+        ArrayList<>(getUnvisitedCities(ant.getVisitedCities()));
+        allowedCities.removeAll(tabuList);
+
+        if(allowedCities.isEmpty()) {
+        return null;
+        }
+
+        double total = 0.0;
+        Map<City, Double> probabilities = new HashMap<>();
+
+        for (City city : allowedCities) {
+        Edge edge = findEdge(currentCity, city);
+        double pheromone = Math.pow(edge.getPheromoneLevel(), Env.alpha);
+        double heuristic = Math.pow(1.0 / edge.getLength(), Env.beta);
+        double probability = pheromone * heuristic;
+        probabilities.put(city, probability);
+        total += probability;
+        }
+
+        double random = Math.random() * total;
+        double cumulative = 0.0;
+        for (Map.Entry<City, Double> entry : probabilities.entrySet()) {
+        cumulative += entry.getValue();
+        if (random <= cumulative) {
+                return entry.getKey();
+            }
+        }
+
+        return allowedCities.get(0);
+    }
 
     public static double calculateTourLength(List<City> tour) {
 
@@ -339,7 +335,6 @@ public class VrpAco {
                     current.set(i, cityI);
                     current.set(j, cityJ);
                 }
-
             }
         }
         return best;
