@@ -120,7 +120,8 @@ public class VrpAco {
     private void constructAntTour(Ant ant) {
 
         ant.reset(cities);
-        while (ant.getVisitedCities().size() < cities.size()) {
+
+        while (!getUnvisitedCities(ant.getVisitedCities()).isEmpty()) {
             City nextCity = selectNextCity(ant);
 
             double distance = ant.getCurrentCity().distanceTo(nextCity);
