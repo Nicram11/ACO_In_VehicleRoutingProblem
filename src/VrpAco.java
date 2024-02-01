@@ -187,70 +187,70 @@ public class VrpAco {
     // ACO with mutations (1 swap between different route + local optimisation)
     // selecting cities until it can no more
 
+    /*
+     * private void constructAntTourTabuList(Ant ant) {
+     * 
+     * ant.reset(cities);
+     * 
+     * List<City> tabuList = new ArrayList<>();
+     * while (ant.getVisitedCities().size() < cities.size()) {
+     * City nextCity = selectNextCityTabuList(ant, tabuList);
+     * 
+     * if(nextCity == null) {
+     * ant.completeVehicleTour();
+     * tabuList.clear();
+     * continue;
+     * }
+     * 
+     * double distance = ant.getCurrentCity().distanceTo(nextCity);
+     * int demand = nextCity.getDemand();
+     * Vehicle vehicle = ant.getCurrentVehicle();
+     * if (vehicle.canAddLoad(demand)) {
+     * vehicle.addLoad(demand);
+     * ant.visitCity(nextCity, distance);
+     * } else {
+     * tabuList.add(nextCity);
+     * }
+     * }
+     * ant.completeVehicleTour();
+     * }
+     */
 
     /*
-    private void constructAntTourTabuList(Ant ant) {
-
-        ant.reset(cities);
-
-        List<City> tabuList = new ArrayList<>();
-        while (ant.getVisitedCities().size() < cities.size()) {
-            City nextCity = selectNextCityTabuList(ant, tabuList);
-
-            if(nextCity == null) {
-                ant.completeVehicleTour();
-                tabuList.clear();
-                continue;
-            }
-
-            double distance = ant.getCurrentCity().distanceTo(nextCity);
-            int demand = nextCity.getDemand();
-            Vehicle vehicle = ant.getCurrentVehicle();
-            if (vehicle.canAddLoad(demand)) {
-                vehicle.addLoad(demand);
-                ant.visitCity(nextCity, distance);
-            } else {
-                tabuList.add(nextCity);
-            }
-        }
-        ant.completeVehicleTour();
-    }
-    */
-
-    /*
-    private City selectNextCityTabuList(Ant ant, List<City> tabuList) {
-        City currentCity = ant.getCurrentCity();
-        List<City> allowedCities = new ArrayList<>(getUnvisitedCities(ant.getVisitedCities()));
-        allowedCities.removeAll(tabuList);
-
-        if(allowedCities.isEmpty()) {
-            return null;
-        }
-
-        double total = 0.0;
-        Map<City, Double> probabilities = new HashMap<>();
-
-        for (City city : allowedCities) {
-            Edge edge = findEdge(currentCity, city);
-            double pheromone = Math.pow(edge.getPheromoneLevel(), Env.alpha);
-            double heuristic = Math.pow(1.0 / edge.getLength(), Env.beta);
-            double probability = pheromone * heuristic;
-            probabilities.put(city, probability);
-            total += probability;
-        }
-
-        double random = Math.random() * total;
-        double cumulative = 0.0;
-        for (Map.Entry<City, Double> entry : probabilities.entrySet()) {
-            cumulative += entry.getValue();
-            if (random <= cumulative) {
-                return entry.getKey();
-            }
-        }
-
-        return allowedCities.get(0);
-    }
-    */
+     * private City selectNextCityTabuList(Ant ant, List<City> tabuList) {
+     * City currentCity = ant.getCurrentCity();
+     * List<City> allowedCities = new
+     * ArrayList<>(getUnvisitedCities(ant.getVisitedCities()));
+     * allowedCities.removeAll(tabuList);
+     * 
+     * if(allowedCities.isEmpty()) {
+     * return null;
+     * }
+     * 
+     * double total = 0.0;
+     * Map<City, Double> probabilities = new HashMap<>();
+     * 
+     * for (City city : allowedCities) {
+     * Edge edge = findEdge(currentCity, city);
+     * double pheromone = Math.pow(edge.getPheromoneLevel(), Env.alpha);
+     * double heuristic = Math.pow(1.0 / edge.getLength(), Env.beta);
+     * double probability = pheromone * heuristic;
+     * probabilities.put(city, probability);
+     * total += probability;
+     * }
+     * 
+     * double random = Math.random() * total;
+     * double cumulative = 0.0;
+     * for (Map.Entry<City, Double> entry : probabilities.entrySet()) {
+     * cumulative += entry.getValue();
+     * if (random <= cumulative) {
+     * return entry.getKey();
+     * }
+     * }
+     * 
+     * return allowedCities.get(0);
+     * }
+     */
 
     public static double calculateTourLength(List<City> tour) {
 
@@ -267,12 +267,13 @@ public class VrpAco {
 
         return sum;
     }
+
     public void mutate(Ant ant) {
-        if(Math.random() > Env.mutationProbability) {
+        if (Math.random() < Env.mutationProbability) {
             return;
         }
 
-        for(int i = 0; i < Env.findingMutationTryCount; i++) {
+        for (int i = 0; i < Env.findingMutationTryCount; i++) {
 
             Random random = new Random();
             int firstTripId = random.nextInt(0, ant.getVehicleRunCount());
@@ -281,26 +282,29 @@ public class VrpAco {
             Pair<Integer, Integer> firstTrip = ant.getIndexesOfStartEnd().get(firstTripId);
             Pair<Integer, Integer> secondTrip = ant.getIndexesOfStartEnd().get(secondTripId);
 
-            if (firstTrip.getFirst() + 1 >= firstTrip.getSecond() || secondTrip.getFirst() + 1 >= secondTrip.getSecond()) {
+            if (firstTrip.getFirst() + 1 >= firstTrip.getSecond()
+                    || secondTrip.getFirst() + 1 >= secondTrip.getSecond()) {
                 continue;
             }
+            int firstIndex = random.nextInt(firstTrip.getFirst() + 1, firstTrip.getSecond());
+            int secondIndex = random.nextInt(secondTrip.getFirst() + 1, secondTrip.getSecond());
+            City firstCity = ant.getVisitedCities()
+                    .get(firstIndex);
+            City secondCity = ant.getVisitedCities()
+                    .get(secondIndex);
 
-            City firstCity = ant.getVisitedCities().get(random.nextInt(firstTrip.getFirst()+1, firstTrip.getSecond()));
-            City secondCity = ant.getVisitedCities().get(random.nextInt(secondTrip.getFirst()+1, secondTrip.getSecond()));
-
-            if(firstCity.getId() == ant.getDepoCityId() || secondCity.getId() == ant.getDepoCityId()) {
+            if (firstCity.getId() == ant.getDepoCityId() || secondCity.getId() == ant.getDepoCityId()) {
                 continue;
             }
 
             Ant mutatedAnt = new Ant(ant);
 
-            mutatedAnt.getVisitedCities().set(firstCity.getId(), secondCity);
-            mutatedAnt.getVisitedCities().set(secondCity.getId(), firstCity);
+            Collections.swap(mutatedAnt.getVisitedCities(), firstIndex, secondIndex);
 
-            List<City> upgradedTour1 =
-                    hilltopSearch(mutatedAnt.getVisitedCities().subList(firstTrip.getFirst(), firstTrip.getSecond() + 1));
-            List<City> upgradedTour2 =
-                    hilltopSearch(mutatedAnt.getVisitedCities().subList(secondTrip.getFirst(), secondTrip.getSecond() + 1));
+            List<City> upgradedTour1 = hilltopSearch(
+                    mutatedAnt.getVisitedCities().subList(firstTrip.getFirst(), firstTrip.getSecond() + 1));
+            List<City> upgradedTour2 = hilltopSearch(
+                    mutatedAnt.getVisitedCities().subList(secondTrip.getFirst(), secondTrip.getSecond() + 1));
 
             for (int j = firstTrip.getFirst(); j <= firstTrip.getSecond(); j++) {
                 mutatedAnt.getVisitedCities().set(j, upgradedTour1.get(j - firstTrip.getFirst()));
@@ -310,7 +314,7 @@ public class VrpAco {
                 mutatedAnt.getVisitedCities().set(j, upgradedTour2.get(j - secondTrip.getFirst()));
             }
 
-            if(ant.getTourLength() > mutatedAnt.evaluateDistance()) {
+            if (ant.getTourLength() > mutatedAnt.evaluateDistance()) {
                 ant.updateAntValues(mutatedAnt);
             }
         }
@@ -322,14 +326,14 @@ public class VrpAco {
         List<City> current;
 
         for (int k = 0; k < Env.hilltopSearchTryCount; k++) {
-            for(int i = 1; i < trip.size()-1; i++) {
+            for (int i = 1; i < trip.size() - 1; i++) {
                 current = new ArrayList<>(best);
                 City cityI = current.get(i);
-                for(int j = i+1; j<trip.size()-1; j++) {
+                for (int j = i + 1; j < trip.size() - 1; j++) {
                     City cityJ = current.get(j);
                     current.set(i, cityJ);
                     current.set(j, cityI);
-                    if(calculateTourLength(current) < calculateTourLength(best)) {
+                    if (calculateTourLength(current) < calculateTourLength(best)) {
                         best = new ArrayList<>(current);
                     }
                     current.set(i, cityI);
